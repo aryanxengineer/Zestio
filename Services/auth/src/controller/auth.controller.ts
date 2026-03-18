@@ -21,12 +21,26 @@ export const loginUser = asyncHandler(
       });
     }
 
-    const googleResponse = await oAuth2Client.getToken(code);
+    let googleResponse;
+    try {
+      googleResponse = await oAuth2Client.getToken(code);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "Google token exchange failed",
+      });
+    }
 
     oAuth2Client.setCredentials(googleResponse.tokens);
 
     const userRes = await axios.get(
-      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleResponse.tokens.access_token}`,
+      "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
+      {
+        headers: {
+          Authorization: `Bearer ${googleResponse.tokens.access_token}`,
+        },
+      },
     );
 
     const { name, email, picture } = userRes.data;
