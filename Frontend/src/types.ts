@@ -23,3 +23,21 @@ export interface IAppContext {
   loadingLocation: boolean;
   city: string;
 }
+
+export interface IRestaurant {
+  _id: string;
+  name: string;
+  description?: string;
+  image: string;
+  ownerId: string;
+  phone: number;
+  isVerified: boolean;
+  autoLocation: {
+    type: "Point";
+    coordinates: [number, number]; // [ Latitude, Longitude ]
+    formattedAddrss: string;
+  };
+  isOpen: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}

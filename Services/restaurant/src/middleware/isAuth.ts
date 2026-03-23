@@ -8,6 +8,7 @@ export interface IUser {
   email: string;
   image: string;
   role: string;
+  restaurantId: string;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -19,6 +20,8 @@ export const isAuth = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
+  console.log("is auth me aa gaya");
+
   try {
     const authHeader = req.headers.authorization;
 
@@ -53,9 +56,29 @@ export const isAuth = async (
     req.user = decodedValue.user;
     next();
   } catch (error) {
-    res.status(500).json({
+    res.status(401).json({
       success: false,
-      message: "Internal Server Error - Jwt Error",
+      message: "Invalid or expired token",
     });
+    return;
   }
+};
+
+export const isSeller = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  console.log("is seller me aa gaya");
+  const user = req.user;
+
+  if (!user || user.role !== "seller") {
+    res.status(403).json({
+      success: false,
+      message: "Only sellers can access this",
+    });
+    return;
+  }
+
+  next();
 };

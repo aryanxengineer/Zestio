@@ -3,7 +3,10 @@ import { Schema, Document, model } from "mongoose";
 export interface IRestaurant extends Document {
   name: string;
   description?: string;
-  image: string;
+  image: {
+    url: string;
+    publicId: string;
+  };
   ownerId: string;
   phone: number;
   isVerified: boolean;
@@ -27,8 +30,14 @@ const restaurantSchema: Schema<IRestaurant> = new Schema(
     },
     description: String,
     image: {
-      url: String,
-      publicId: String,
+      url: {
+        type: String,
+        required: true,
+      },
+      publicId: {
+        type: String,
+        required: true,
+      },
     },
     ownerId: {
       type: String,
@@ -52,9 +61,8 @@ const restaurantSchema: Schema<IRestaurant> = new Schema(
         type: [Number],
         required: true,
       },
-      formattedAddrss: {
+      formattedAddress: {
         type: String,
-        // required: true,
       },
     },
     isOpen: {
@@ -65,7 +73,7 @@ const restaurantSchema: Schema<IRestaurant> = new Schema(
   { timestamps: true },
 );
 
-restaurantSchema.index({ autoLocation: "2dsphere" });
+restaurantSchema.index({ ownerId: 1 }, { unique: true });
 
 export const RestaurantModel = model<IRestaurant>(
   "Restaurant",
