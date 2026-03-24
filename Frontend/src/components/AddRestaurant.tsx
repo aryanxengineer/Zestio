@@ -5,7 +5,12 @@ import axios from "axios";
 import { restaurantService } from "../main";
 import { motion } from "framer-motion";
 
-const AddRestaurant = () => {
+interface props {
+    fetchMyRestaurant: () => Promise<void>;
+}
+
+
+const AddRestaurant = ({ fetchMyRestaurant }: props) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [phone, setPhone] = useState("");
@@ -42,11 +47,7 @@ const AddRestaurant = () => {
             });
 
             toast.success("Restaurant added successfully");
-
-            setName("");
-            setDescription("");
-            setPhone("");
-            setImage(null);
+            fetchMyRestaurant();
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Something went wrong");
         } finally {
