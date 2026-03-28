@@ -1,6 +1,6 @@
 import axios from "axios";
 import { RestaurantModel } from "./../models/restaurant.model.js";
-import { Response } from "express";
+import { Request, NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../middleware/isAuth.js";
 import { JWT_SECRET, UTIL_SERVICE } from "../config/dotenv.js";
 import jwt from "jsonwebtoken";
@@ -9,13 +9,8 @@ import FormData from "form-data";
 
 export const addRestaurant = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
-    // Debug (remove in production or replace with logger)
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
-
     const user = req.user;
 
-    // 🔒 Auth check
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -23,7 +18,6 @@ export const addRestaurant = asyncHandler(
       });
     }
 
-    // 🔒 Business rule: one restaurant per owner
     const existingRestaurant = await RestaurantModel.findOne({
       ownerId: user._id,
     });
@@ -35,11 +29,9 @@ export const addRestaurant = asyncHandler(
       });
     }
 
-    // 📥 Extract body
     const { name, description, latitude, longitude, formattedAddress, phone } =
       req.body;
 
-    // 🔴 Required field validation
     if (!name || !latitude || !longitude || !phone) {
       return res.status(400).json({
         success: false,
@@ -47,7 +39,6 @@ export const addRestaurant = asyncHandler(
       });
     }
 
-    // 🔴 Type validation
     const lat = Number(latitude);
     const lng = Number(longitude);
     const phoneNumber = Number(phone);
@@ -101,9 +92,6 @@ export const addRestaurant = asyncHandler(
           timeout: 10000, // increase timeout
         },
       );
-
-      // ✅ DEBUG RESPONSE
-      console.log("UPLOAD RESPONSE:", uploadResponse.data);
     } catch (error: any) {
       console.error("Upload Service Error FULL:", {
         message: error.message,
@@ -119,7 +107,6 @@ export const addRestaurant = asyncHandler(
     }
     const imageData = uploadResponse.data;
 
-    // 🗄️ Create restaurant
     const restaurant = await RestaurantModel.create({
       name,
       description,
@@ -131,7 +118,7 @@ export const addRestaurant = asyncHandler(
       ownerId: user._id,
       autoLocation: {
         type: "Point",
-        coordinates: [lng, lat], // GeoJSON: [longitude, latitude]
+        coordinates: [lng, lat],
         formattedAddress,
       },
       isVerified: false,
@@ -146,10 +133,10 @@ export const addRestaurant = asyncHandler(
   },
 );
 
+// Get Restaurant
 export const getRestaurant = asyncHandler(
   async (req: AuthenticatedRequest, res) => {
     const user = req.user;
-    console.log("yaha tak aa gya");
 
     if (!user) {
       return res.status(401).json({
@@ -188,5 +175,71 @@ export const getRestaurant = asyncHandler(
     }
 
     res.json({ restaurant });
+  },
+);
+
+// update status restaurant
+export const updateStatusRestaurant = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(403).json({
+        message: "Please login",
+      });
+    }
+
+    const { status } = req.body;
+
+    if (typeof status !== "boolean") {
+      return res.status(400).json({
+        message: "Status must be boolean",
+      });
+    }
+
+    const restaurant = await RestaurantModel.findOneAndUpdate(
+      { ownerId: req.user._id },
+      { isOpen: status },
+      { new: true },
+    );
+
+    if (!restaurant) {
+      return res.status(404).json({
+        message: "Restaurant not found",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Restaurant status updated",
+      restaurant,
+    });
+  },
+);
+
+export const updateRestaurant = asyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    if (!req.user) {
+      return res.status(403).json({
+        message: "Please Login",
+      });
+    }
+
+    const { name, description } = req.body;
+
+    const restaurant = await RestaurantModel.findOneAndUpdate(
+      { ownerId: req.user._id },
+      { name: name, description: description },
+      { new: true },
+    );
+
+    if (!restaurant) {
+      return res.status(404).json({
+        message: "Restaurant not found",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Restaurant details updated",
+      restaurant,
+    });
+
   },
 );

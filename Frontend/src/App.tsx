@@ -2,7 +2,6 @@ import Navbar from "./components/Navbar"
 import { useAppData } from "./context/AppContext"
 import Restaurant from "./pages/Restaurant"
 import Routing from "./routes/route"
-import { Toaster } from "react-hot-toast"
 
 const App = () => {
 
@@ -17,7 +16,6 @@ const App = () => {
     <>
       <Navbar />
       <Routing />
-      <Toaster />
     </>
   )
 }

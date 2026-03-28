@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { authService } from "../main";
 import type { IAppContext, LocationData, User } from "../types";
+import { Toaster } from "react-hot-toast";
 
 interface AppProviderProps {
     children: ReactNode;
@@ -124,7 +125,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }, []);
 
 
-    return <AppContext.Provider value={{ isAuth, loading, setIsAuth, setLoading, setUser, user, location, loadingLocation, city }}>{children}</AppContext.Provider>
+    return <AppContext.Provider value={{ isAuth, loading, setIsAuth, setLoading, setUser, user, location, loadingLocation, city }}>
+        {children}
+        <Toaster />
+    </AppContext.Provider>
 
 };
 

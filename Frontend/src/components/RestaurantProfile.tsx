@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { restaurantService } from "../main";
 
 interface IRestaurant {
     _id: string;
@@ -29,7 +30,7 @@ const RestaurantProfile = ({ restaurant, isSeller, onUpdate }: Props) => {
     const toggleOpenStatus = async () => {
         try {
             const { data } = await axios.put(
-                `/api/v1/restaurants/status`,
+                `${restaurantService}/api/v1/restaurant/status`,
                 { status: !isOpen },
                 {
                     headers: {
@@ -37,6 +38,7 @@ const RestaurantProfile = ({ restaurant, isSeller, onUpdate }: Props) => {
                     },
                 }
             );
+            onUpdate(data.restaurant);
             setIsOpen(data.restaurant.isOpen);
             toast.success(data.message);
         } catch (error: any) {
@@ -48,7 +50,7 @@ const RestaurantProfile = ({ restaurant, isSeller, onUpdate }: Props) => {
         try {
             setLoading(true);
             const { data } = await axios.put(
-                `/api/v1/restaurant/edit`,
+                `${restaurantService}/api/v1/restaurant/edit`,
                 { name, description },
                 {
                     headers: {
