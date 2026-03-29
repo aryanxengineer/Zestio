@@ -20,7 +20,6 @@ export const isAuth = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  console.log("is auth me aa gaya");
 
   try {
     const authHeader = req.headers.authorization;
@@ -69,7 +68,6 @@ export const isSeller = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  console.log("is seller me aa gaya");
   const user = req.user;
 
   if (!user || user.role !== "seller") {

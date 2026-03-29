@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import type { IRestaurant } from "../types";
-import axios from "axios";
 import { restaurantService } from "../main";
+import { AddMenuItem } from "../components/AddMenuItem";
 import { motion } from "framer-motion";
+
+import type { IRestaurant } from "../types";
+import type { Variants } from "framer-motion";
+
+import axios from "axios";
+import MenuItem from "../components/MenuItem";
 import AddRestaurant from "../components/AddRestaurant";
 import RestaurantProfile from "../components/RestaurantProfile";
-import { type Variants } from "framer-motion";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,7 +41,7 @@ const Restaurant = () => {
   const fetchMyRestaurant = async () => {
     try {
       const { data } = await axios.get(
-        `${restaurantService}/api/v1/restaurant/`,
+        `${restaurantService}/api/v1/restaurants/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -181,9 +185,7 @@ const Restaurant = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <p className="text-gray-600 text-sm">
-                  Menu Items will be displayed here.
-                </p>
+                <MenuItem />
               </motion.div>
             )}
 
@@ -193,9 +195,11 @@ const Restaurant = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <p className="text-gray-600 text-sm">
-                  Add new food items here.
-                </p>
+                <AddMenuItem
+                  onItemAdded={function (): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
               </motion.div>
             )}
 

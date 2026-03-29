@@ -14,7 +14,7 @@ export interface IMenuItems extends Document {
   createdAt: Date;
 }
 
-const menuItmeSchema: Schema<IMenuItems> = new Schema(
+const menuItemSchema: Schema<IMenuItems> = new Schema(
   {
     restaurantId: {
       type: Schema.Types.ObjectId,
@@ -23,32 +23,31 @@ const menuItmeSchema: Schema<IMenuItems> = new Schema(
       index: true,
     },
     name: {
-      types: String,
+      type: String,
       required: true,
       trim: true,
     },
     description: {
-      types: String,
+      type: String,
       trim: true,
     },
     price: {
-      types: Number,
+      type: Number,
       required: true,
       trim: true,
     },
     image: {
       url: {
-        types: String,
+        type: String,
         required: true,
       },
       publicId: {
-        types: String,
+        type: String,
         required: true,
       },
-      required: true,
     },
     isAvailable: {
-      types: Boolean,
+      type: Boolean,
       required: true,
       default: true,
     },
@@ -56,4 +55,4 @@ const menuItmeSchema: Schema<IMenuItems> = new Schema(
   { timestamps: true },
 );
 
-export const MenuItemModel = model<IMenuItems>("MenuItem", menuItmeSchema);
+export const MenuItemModel = model<IMenuItems>("MenuItem", menuItemSchema);

@@ -30,7 +30,7 @@ const RestaurantProfile = ({ restaurant, isSeller, onUpdate }: Props) => {
     const toggleOpenStatus = async () => {
         try {
             const { data } = await axios.put(
-                `${restaurantService}/api/v1/restaurant/status`,
+                `${restaurantService}/api/v1/restaurants/status`,
                 { status: !isOpen },
                 {
                     headers: {
@@ -50,7 +50,7 @@ const RestaurantProfile = ({ restaurant, isSeller, onUpdate }: Props) => {
         try {
             setLoading(true);
             const { data } = await axios.put(
-                `${restaurantService}/api/v1/restaurant/edit`,
+                `${restaurantService}/api/v1/restaurants/edit`,
                 { name, description },
                 {
                     headers: {
