@@ -4,11 +4,7 @@ import toast from "react-hot-toast";
 import { Loader2, UploadCloud } from "lucide-react";
 import { restaurantService } from "../main";
 
-export const AddMenuItem = ({
-  onItemAdded,
-}: {
-  onItemAdded: () => void;
-}) => {
+export const AddMenuItem = ({ onItemAdded }: { onItemAdded: () => void }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -49,7 +45,6 @@ export const AddMenuItem = ({
 
       await axios.post(`${restaurantService}/api/v1/items/new-item`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
@@ -152,6 +147,4 @@ export const AddMenuItem = ({
       </div>
     </div>
   );
-}
-
-
+};

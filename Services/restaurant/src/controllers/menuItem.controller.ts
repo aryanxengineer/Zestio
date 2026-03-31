@@ -7,6 +7,8 @@ import { MenuItemModel } from "../models/menuItems.model.js";
 
 export const addMenuItems = asyncHandler(
   async (req: AuthenticatedRequest, res) => {
+    console.log(req.body);
+
     if (!req.user) {
       return res.status(401).json({
         success: false,

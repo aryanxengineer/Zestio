@@ -127,7 +127,7 @@ const RestaurantProfile = ({ restaurant, isSeller, onUpdate }: Props) => {
                                     : "bg-red-500 hover:bg-red-600"
                                 }`}
                         >
-                            {isOpen ? "Live" : "Offline"}
+                            {isOpen ? "Online" : "Offline"}
                         </button>
                     </div>
                 )}

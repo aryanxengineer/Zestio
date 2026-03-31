@@ -3,13 +3,14 @@ import { restaurantService } from "../main";
 import { AddMenuItem } from "../components/AddMenuItem";
 import { motion } from "framer-motion";
 
-import type { IRestaurant } from "../types";
+import type { IMenuItems, IRestaurant } from "../types";
 import type { Variants } from "framer-motion";
 
 import axios from "axios";
 import MenuItem from "../components/MenuItem";
 import AddRestaurant from "../components/AddRestaurant";
 import RestaurantProfile from "../components/RestaurantProfile";
+import toast from "react-hot-toast";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -64,6 +65,33 @@ const Restaurant = () => {
   useEffect(() => {
     fetchMyRestaurant();
   }, []);
+
+  const [menuItems, setMenuItems] = useState<IMenuItems[]>([]);
+
+  const fetchAllMenuItems = async (restaurantId: string) => {
+    try {
+      const { data } = await axios.get(
+        `${restaurantService}/api/v1/items/all/${restaurantId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      setMenuItems(data.items);
+      toast.success("Restaurant items fetched successfully");
+    } catch (error: any) {
+      console.log(error.message);
+      toast.error("Fetching items failed");
+    }
+  };
+
+  useEffect(() => {
+    if (restaurant?._id) {
+      fetchAllMenuItems(restaurant._id);
+    }
+  }, [restaurant]);
 
   if (loading) {
     <motion.div
@@ -184,8 +212,23 @@ const Restaurant = () => {
                 key="menu"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                <MenuItem />
+                {menuItems.length > 0 ? (
+                  <MenuItem
+                    items={menuItems}
+                    isSeller={true}
+                    onItemDeleted={() => {
+                      setMenuItems((prev) =>
+                        prev.filter((i) => i._id !== item._id),
+                      );
+                    }}
+                  />
+                ) : (
+                  <p className="text-gray-500 text-sm col-span-full text-center">
+                    No menu items found
+                  </p>
+                )}
               </motion.div>
             )}
 
