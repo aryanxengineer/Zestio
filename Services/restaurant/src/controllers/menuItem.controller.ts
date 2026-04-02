@@ -132,16 +132,16 @@ export const deleteMenuItems = asyncHandler(
       });
     }
 
-    const { itemId } = req.params;
+    const { id } = req.params;
 
-    if (!itemId) {
+    if (!id) {
       return res.status(400).json({
         success: false,
         message: "Id is required",
       });
     }
 
-    const item = await MenuItemModel.findById(itemId);
+    const item = await MenuItemModel.findById(id);
 
     if (!item) {
       return res.status(404).json({
@@ -180,16 +180,16 @@ export const toggleMenuItemAvailability = asyncHandler(
       });
     }
 
-    const { itemId } = req.params;
+    const { id } = req.params;
 
-    if (!itemId) {
+    if (!id) {
       return res.status(400).json({
         success: false,
         message: "Id is required",
       });
     }
 
-    const item = await MenuItemModel.findById(itemId);
+    const item = await MenuItemModel.findById(id);
 
     if (!item) {
       return res.status(404).json({

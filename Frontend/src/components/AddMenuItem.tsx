@@ -4,7 +4,11 @@ import toast from "react-hot-toast";
 import { Loader2, UploadCloud } from "lucide-react";
 import { restaurantService } from "../main";
 
-export const AddMenuItem = ({ onItemAdded }: { onItemAdded: () => void }) => {
+export const AddMenuItem = ({
+  onItemAdded,
+}: {
+  onItemAdded: (id: string) => void;
+}) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -43,15 +47,19 @@ export const AddMenuItem = ({ onItemAdded }: { onItemAdded: () => void }) => {
     try {
       setLoading(true);
 
-      await axios.post(`${restaurantService}/api/v1/items/new-item`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const res = await axios.post(
+        `${restaurantService}/api/v1/items/new-item`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      });
+      );
 
       toast.success("Item added successfully");
       resetForm();
-      onItemAdded();
+      onItemAdded(res.data?.item?.restaurantId);
     } catch (error) {
       console.error(error);
       toast.error("Failed to add item");

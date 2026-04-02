@@ -218,11 +218,7 @@ const Restaurant = () => {
                   <MenuItem
                     items={menuItems}
                     isSeller={true}
-                    onItemDeleted={() => {
-                      setMenuItems((prev) =>
-                        prev.filter((i) => i._id !== item._id),
-                      );
-                    }}
+                    onItemsUpdated={() => {}}
                   />
                 ) : (
                   <p className="text-gray-500 text-sm col-span-full text-center">
@@ -239,9 +235,7 @@ const Restaurant = () => {
                 animate={{ opacity: 1, y: 0 }}
               >
                 <AddMenuItem
-                  onItemAdded={function (): void {
-                    throw new Error("Function not implemented.");
-                  }}
+                  onItemAdded={fetchAllMenuItems}
                 />
               </motion.div>
             )}
