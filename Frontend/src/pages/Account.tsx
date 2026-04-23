@@ -1,98 +1,60 @@
-import { useAppData } from "../context/AppContext";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ShoppingBag, MapPin, LogOut } from "lucide-react";
+import { useAppData } from "../context/AppContext";
+import toast from "react-hot-toast";
+import { BiLogOut, BiMapPin, BiPackage } from "react-icons/bi";
 
-const AccountPage = () => {
-  const { user, setIsAuth, setUser } = useAppData();
+const Account = () => {
+  const { user, setUser, setIsAuth } = useAppData();
+
+  const firstLetter = user?.name.charAt(0).toUpperCase();
+
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsAuth(false);
+  const logoutHandler = () => {
+    localStorage.setItem("token", "");
     setUser(null);
-    navigate("/");
+    setIsAuth(false);
+    navigate("/login");
+    toast.success("logout Success");
   };
-
-  const firstLetter = user?.name?.charAt(0)?.toUpperCase() || "U";
-
-  const menuItems = [
-    { label: "My Orders", icon: <ShoppingBag size={18} />, path: "/orders" },
-    { label: "My Addresses", icon: <MapPin size={18} />, path: "/addresses" },
-  ];
-
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
-      <div className="max-w-5xl mx-auto">
-
-        {/* Profile Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white/80 backdrop-blur-md rounded-3xl shadow-lg p-5 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-5"
-        >
-          {/* Avatar */}
-          <div className="w-20 h-20 rounded-full bg-linear-to-br from-black to-gray-600 text-white flex items-center justify-center text-2xl font-bold shadow-md">
+    <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <div className="mx-auto max-w-md rounded-lg bg-white shadow-sm">
+        <div className="flex items-center gap-4 border-b p-5">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500 text-xl font-semibold text-white">
             {firstLetter}
           </div>
-
-          {/* User Info */}
-          <div className="text-center sm:text-left">
-            <h2 className="text-xl sm:text-2xl font-semibold">
-              {user?.name || "User"}
-            </h2>
-            <p className="text-gray-500 text-sm sm:text-base">
-              {user?.email || "No email"}
-            </p>
+          <div>
+            <h2 className="text-lg font-semibold">{user?.name}</h2>
+            <p className="text-sm text-gray-500">{user?.email}</p>
           </div>
-        </motion.div>
-
-        {/* Menu Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
-          {menuItems.map((item, index) => (
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              key={index}
-              onClick={() => navigate(item.path)}
-              className="bg-white rounded-2xl p-5 shadow-md cursor-pointer flex items-center justify-between hover:shadow-lg transition"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  {item.icon}
-                </div>
-                <span className="font-medium text-sm sm:text-base">
-                  {item.label}
-                </span>
-              </div>
-              <span className="text-gray-400">→</span>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Logout */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mt-8"
-        >
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-black text-white rounded-2xl shadow-md hover:opacity-90 transition"
+        </div>
+        <div className="divide-y">
+          <div
+            className="flex cursor-pointer items-center gap-4 p-5 hover:bg-gray-50"
+            onClick={() => navigate("/orders")}
           >
-            <LogOut size={18} />
-            Logout
-          </button>
-        </motion.div>
+            <BiPackage className="h-5 w-5 text-red-500" />
+            <span className="font-medium">Your Orders</span>
+          </div>
+          <div
+            className="flex cursor-pointer items-center gap-4 p-5 hover:bg-gray-50"
+            onClick={() => navigate("/address")}
+          >
+            <BiMapPin className="h-5 w-5 text-red-500" />
+            <span className="font-medium">Addresses</span>
+          </div>
+          <div
+            className="flex cursor-pointer items-center gap-4 p-5 hover:bg-gray-50"
+            onClick={logoutHandler}
+          >
+            <BiLogOut className="h-5 w-5 text-red-500" />
+            <span className="font-medium">Logout</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AccountPage;
+export default Account;

@@ -3,104 +3,69 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../main";
 import toast from "react-hot-toast";
-import { useGoogleLogin } from '@react-oauth/google';
-import { motion } from "framer-motion";
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
 import { useAppData } from "../context/AppContext";
 
-
 const Login = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+  const { setUser, setIsAuth } = useAppData();
 
-    const { setUser, setIsAuth } = useAppData();
+  const responseGoogle = async (authResult: any) => {
+    setLoading(true);
+    try {
+      const result = await axios.post(`${authService}/api/auth/login`, {
+        code: authResult["code"],
+      });
 
-    const responseGoogle = async (authResult: any) => {
-        if (!authResult?.code) {
-            toast.error("Authorization code not received");
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const result = await axios.post(`${authService}/api/v1/auth/login`, {
-                code: authResult.code,
-            });
-
-            localStorage.setItem('token', result.data.token);
-            toast.success(result.data.message);
-
-            setUser(result.data.user);
-            setIsAuth(true);
-
-            navigate('/');
-        } catch (error) {
-            console.error(error);
-            toast.error("Problem while login");
-        } finally {
-            setLoading(false);
-        }
+      localStorage.setItem("token", result.data.token);
+      toast.success(result.data.message);
+      setLoading(false);
+      setUser(result.data.user);
+      setIsAuth(true);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Problem while login");
+      setLoading(false);
     }
+  };
 
-    const googleLogin = useGoogleLogin({
-        onSuccess: responseGoogle,
-        onError: (error) => {
-            console.error("Google Login Failed:", error);
-            toast.error("Google login failed");
-        },
-        flow: 'auth-code'
-    })
+  const googleLogin = useGoogleLogin({
+    onSuccess: responseGoogle,
+    onError: responseGoogle,
+    flow: "auth-code",
+  });
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="w-full max-w-sm space-y-6">
+        <h1 className="text-center text-3xl font-bold text-[#E23774]">
+          Tomato
+        </h1>
 
-    return (
-       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-black to-gray-800 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 50, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-md"
-      >
-        <div className="rounded-2xl border border-gray-700 bg-white/5 backdrop-blur-xl shadow-2xl p-8 space-y-6">
-          {/* Heading */}
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-semibold text-white">
-              Welcome Back
-            </h1>
-            <p className="text-sm text-gray-400">
-              Continue with your Google account
-            </p>
-          </div>
+        <p className="text-center text-sm text-gray-500">
+          Log in or sign up to continue
+        </p>
 
-          {/* Google Button */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.02 }}
-            onClick={googleLogin}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-200 rounded-xl py-4 text-sm font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="google"
-              className="w-5 h-5"
-            />
-            {loading ? "Signing in..." : "Continue with Google"}
-          </motion.button>
+        <button
+          onClick={googleLogin}
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3"
+        >
+          <FcGoogle size={20} />
+          {loading ? "Signing in ..." : "Continue with Google"}
+        </button>
 
-          {/* Divider */}
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-gray-700" />
-            <span className="text-xs text-gray-500">secure login</span>
-            <div className="flex-1 h-px bg-gray-700" />
-          </div>
-
-          {/* Footer */}
-          <p className="text-center text-xs text-gray-500">
-            By continuing, you agree to our Terms & Privacy Policy
-          </p>
-        </div>
-      </motion.div>
+        <p className="text-center text-xs text-gray-400">
+          By continuing, you agree with our{" "}
+          <span className="text-[#E23774]">Terms of Service</span> &{" "}
+          <span className="text-[#E23774]">Privacy Policy</span>
+        </p>
+      </div>
     </div>
-    )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -3,36 +3,36 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "concurrently \"tsc --watch\" \"node --watch dist/index.js\" ",
-    "restaurant:service": "tsx ./src/index.ts"
+    "dev": "concurrently \"tsc --watch\" \"node --watch dist/index.js\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
-    "axios": "^1.13.6",
+    "@types/amqplib": "^0.10.8",
+    "@types/cors": "^2.8.19",
+    "amqplib": "^0.10.9",
+    "axios": "^1.13.4",
     "cors": "^2.8.6",
     "datauri": "^4.1.0",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.3.0",
-    "multer": "^2.1.1"
+    "mongoose": "^9.1.5",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
-    "@types/axios": "^0.9.36",
-    "@types/cors": "^2.8.19",
-    "@types/dotenv": "^6.1.1",
+    "@types/axios": "^0.14.4",
+    "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/mongoose": "^5.11.96",
-    "@types/multer": "^2.1.0",
-    "@types/node": "^25.5.0",
-    "tsx": "^4.21.0",
+    "@types/mongoose": "^5.11.97",
+    "@types/multer": "^2.0.0",
+    "concurrently": "^9.2.1",
     "typescript": "^5.9.3"
   }
 }
